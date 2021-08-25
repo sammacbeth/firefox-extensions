@@ -1,0 +1,7 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "sourceMap": true,
+        "typeRoots": ["node_modules/web-ext-types"]
+    }
+}

@@ -1,0 +1,29 @@
+diff --git a/node_modules/web-ext-types/global/index.d.ts b/node_modules/web-ext-types/global/index.d.ts
+index c4500c4..a2ea843 100644
+--- a/node_modules/web-ext-types/global/index.d.ts
++++ b/node_modules/web-ext-types/global/index.d.ts
+@@ -350,13 +350,22 @@ declare namespace browser.contextualIdentities {
+     | "orange"
+     | "red"
+     | "pink"
+-    | "purple";
++    | "purple"
++    | "toolbar";
+   type IdentityIcon =
+     | "fingerprint"
+     | "briefcase"
+     | "dollar"
+     | "cart"
+-    | "circle";
++    | "circle"
++    | "gift"
++    | "vacation"
++    | "food"
++    | "fruit"
++    | "pet"
++    | "tree"
++    | "chill"
++    | "fence";
+ 
+   type ContextualIdentity = {
+     cookieStoreId: string;

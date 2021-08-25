@@ -1,0 +1,19 @@
+{
+  "name": "contained",
+  "version": "2021.8.20",
+  "description": "",
+  "main": "contained.js",
+  "scripts": {
+    "postinstall": "patch-package",
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "author": "Sam Macbeth",
+  "license": "ISC",
+  "dependencies": {
+    "bulma": "^0.9.3",
+    "patch-package": "^6.4.7",
+    "typescript": "^4.3.5",
+    "web-ext-types": "^3.2.1"
+  }
+}
