@@ -1,10 +1,10 @@
 {
   "name": "contained",
-  "version": "2021.8.20",
+  "version": "2021.8.25",
   "description": "",
   "main": "contained.js",
   "scripts": {
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && cp node_modules/bulma/css/bulma.min.css ./",
     "build": "tsc",
     "watch": "tsc --watch"
   },

@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
+        "target": "ES2021",
         "sourceMap": true,
         "typeRoots": ["node_modules/web-ext-types"]
     }

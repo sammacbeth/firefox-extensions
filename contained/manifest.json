@@ -1,7 +1,12 @@
 {
     "manifest_version": 2,
     "name": "Contained",
-    "version": "2021.8.20",
+    "version": "2021.8.25",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "contained@sammacbeth.eu"
+        }
+    },
     "background": {
         "scripts": [
             "contained.js"

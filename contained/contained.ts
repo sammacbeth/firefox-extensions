@@ -35,7 +35,10 @@ const config: ExtensionConfig = {
       name: "MS Work",
       color: "purple",
       icon: "briefcase",
-      domains: ["*.duckduckgo.com"],
+      domains: [
+        "*.duckduckgo.com",
+        "duosecurity.com",
+      ],
       entities: ["Microsoft Corporation"],
       enterAction: "ask",
     },
@@ -60,7 +63,7 @@ const config: ExtensionConfig = {
       icon: "fence",
       domains: [],
       entities: ["Google LLC"],
-      leaveAction: 'ask'
+      leaveAction: "ask",
     },
   ],
 };
@@ -103,7 +106,7 @@ async function start() {
 
   browser.webNavigation.onBeforeNavigate.addListener(
     async ({ tabId, url, frameId }) => {
-      if (frameId !== 0 || !url.startsWith('http')) {
+      if (frameId !== 0 || !url.startsWith("http")) {
         // ignore non top-level navigation
         return;
       }
@@ -156,7 +159,7 @@ async function start() {
             await replaceTab(tabId, url, DEFAULT_COOKIE_STOREID);
         }
       }
-      console.log("navigate", tab, matchedContainers, isInMatchedContainer);
+      console.log("navigate", tab.id, url, matchedContainers, isInMatchedContainer);
     }
   );
 
@@ -187,7 +190,7 @@ async function syncContainers() {
       );
       if (match) {
         if (match.color !== color || match.icon !== icon) {
-          console.log('update container', name);
+          console.log("update container", name);
           await browser.contextualIdentities.update(match.cookieStoreId, {
             name,
             icon,
@@ -196,7 +199,7 @@ async function syncContainers() {
         }
         return new Container(match.cookieStoreId, conf);
       } else {
-        console.log('create container', name);
+        console.log("create container", name);
         const c = await browser.contextualIdentities.create({
           name,
           icon,
@@ -214,8 +217,8 @@ async function syncContainers() {
     containers
       .filter(({ cookieStoreId }) => !containerIds.includes(cookieStoreId))
       .map(({ cookieStoreId, name }) => {
-        console.log('remove container', name);
-        return browser.contextualIdentities.remove(cookieStoreId)
+        console.log("remove container", name);
+        return browser.contextualIdentities.remove(cookieStoreId);
       })
   );
   return linkedContainers;
