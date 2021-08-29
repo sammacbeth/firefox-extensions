@@ -21,7 +21,7 @@ type SwitcherPageMessage = {
   cookieStoreId?: string;
 };
 
-const config: ExtensionConfig = {
+const DEFAULT_CONFIG: ExtensionConfig = {
   default: DEFAULT_COOKIE_STOREID,
   containers: [
     {
@@ -35,10 +35,7 @@ const config: ExtensionConfig = {
       name: "MS Work",
       color: "purple",
       icon: "briefcase",
-      domains: [
-        "*.duckduckgo.com",
-        "duosecurity.com",
-      ],
+      domains: ["*.duckduckgo.com", "duosecurity.com"],
       entities: ["Microsoft Corporation"],
       enterAction: "ask",
     },
@@ -82,8 +79,39 @@ class Container implements browser.contextualIdentities.ContextualIdentity {
   }
 }
 
-async function start() {
-  const containers = await syncContainers();
+async function loadConfig(): Promise<ExtensionConfig> {
+  const containers: ContainerConfig[] = [];
+  const syncData = await browser.storage.sync.get(null);
+  if (Object.keys(syncData).length === 0) {
+    return DEFAULT_CONFIG;
+  }
+  Object.keys(syncData).forEach((name) => {
+    containers.push(syncData[name] as ContainerConfig);
+  });
+  return {
+    default: DEFAULT_COOKIE_STOREID,
+    containers,
+  };
+}
+
+async function storeConfig(config: ExtensionConfig) {
+  const syncData = config.containers.reduce((prev, container) => {
+    prev[container.name] = container;
+    return prev;
+  }, {});
+  await browser.storage.sync.set(syncData);
+}
+
+let config: ExtensionConfig;
+let containers: Container[];
+let matcher: ContainerMatcher;
+
+async function init() {
+  config = await loadConfig();
+  console.log("loaded config", config);
+  (<any>window).config = config;
+  window.storeConfig = storeConfig;
+  containers = await syncContainers(config);
   // fetch entity list
   const tds = await (
     await fetch(
@@ -101,7 +129,11 @@ async function start() {
       }
     });
   });
-  const matcher = new ContainerMatcher(containers);
+  matcher = new ContainerMatcher(containers);
+}
+
+async function start() {
+  await init();
   const ignoreTabs = new Set();
 
   browser.webNavigation.onBeforeNavigate.addListener(
@@ -159,7 +191,13 @@ async function start() {
             await replaceTab(tabId, url, DEFAULT_COOKIE_STOREID);
         }
       }
-      console.log("navigate", tab.id, url, matchedContainers, isInMatchedContainer);
+      console.log(
+        "navigate",
+        tab.id,
+        url,
+        matchedContainers,
+        isInMatchedContainer
+      );
     }
   );
 
@@ -177,9 +215,16 @@ async function start() {
       }
     }
   );
+
+  browser.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName === "sync") {
+      console.log("config changed, reloading");
+      init();
+    }
+  });
 }
 
-async function syncContainers() {
+async function syncContainers(config: ExtensionConfig) {
   const containers = await browser.contextualIdentities.query({});
   // find matching containers or create new ones
   const linkedContainers = await Promise.all(

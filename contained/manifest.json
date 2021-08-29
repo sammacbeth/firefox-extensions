@@ -16,6 +16,7 @@
         "contextualIdentities",
         "cookies",
         "webNavigation",
+        "storage",
         "https://staticcdn.duckduckgo.com/*"
     ]
 }
