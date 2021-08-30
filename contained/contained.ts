@@ -12,6 +12,8 @@ type ContainerConfig = Omit<
 
 type ExtensionConfig = {
   default: string;
+  useTempContainers: boolean;
+  tempContainerReplaceInterval: number;
   containers: ContainerConfig[];
 };
 
@@ -23,6 +25,8 @@ type SwitcherPageMessage = {
 
 const DEFAULT_CONFIG: ExtensionConfig = {
   default: DEFAULT_COOKIE_STOREID,
+  useTempContainers: true,
+  tempContainerReplaceInterval: 30,
   containers: [
     {
       name: "Twitter",
@@ -90,6 +94,8 @@ async function loadConfig(): Promise<ExtensionConfig> {
   });
   return {
     default: DEFAULT_COOKIE_STOREID,
+    useTempContainers: DEFAULT_CONFIG.useTempContainers,
+    tempContainerReplaceInterval: DEFAULT_CONFIG.tempContainerReplaceInterval,
     containers,
   };
 }
@@ -105,6 +111,7 @@ async function storeConfig(config: ExtensionConfig) {
 let config: ExtensionConfig;
 let containers: Container[];
 let matcher: ContainerMatcher;
+let tempContainerCounter = 1;
 
 async function init() {
   config = await loadConfig();
@@ -130,6 +137,9 @@ async function init() {
     });
   });
   matcher = new ContainerMatcher(containers);
+  // create a temp container
+  const tempContainer = await createTempContainer();
+  config.default = tempContainer.cookieStoreId;
 }
 
 async function start() {
@@ -170,16 +180,16 @@ async function start() {
         await askWhichContainerToUse(tabId, url, matchedContainers);
       } else if (
         matchedContainers.length === 0 &&
-        tab.cookieStoreId !== DEFAULT_COOKIE_STOREID
+        tab.cookieStoreId !== config.default
       ) {
         // this tab should not be an a container but is
         const cont = containers.find(isMatchingTabContainer);
-        switch (cont.config.leaveAction) {
+        switch (cont?.config?.leaveAction) {
           case "ask":
             await askWhichContainerToUse(tabId, url, [
               {
                 name: "default",
-                cookieStoreId: DEFAULT_COOKIE_STOREID,
+                cookieStoreId: config.default,
                 color: "toolbar",
               },
             ]);
@@ -188,7 +198,7 @@ async function start() {
             break;
           case "default":
           default:
-            await replaceTab(tabId, url, DEFAULT_COOKIE_STOREID);
+            await replaceTab(tabId, url, config.default);
         }
       }
       console.log(
@@ -220,6 +230,18 @@ async function start() {
     if (areaName === "sync") {
       console.log("config changed, reloading");
       init();
+    }
+  });
+
+  // Periodically create a new default container
+  const ALARM_TEMP_ROTATE = "rotateTempContainers";
+  browser.alarms.create(ALARM_TEMP_ROTATE, {
+    periodInMinutes: config.tempContainerReplaceInterval,
+  });
+  browser.alarms.onAlarm.addListener(async (alarm) => {
+    if (alarm.name === ALARM_TEMP_ROTATE && config.useTempContainers) {
+      const tempContainer = await createTempContainer();
+      config.default = tempContainer.cookieStoreId;
     }
   });
 }
@@ -347,6 +369,14 @@ async function askWhichContainerToUse(
   switcherUrl.searchParams.append("options", JSON.stringify(options));
   await browser.tabs.update(tabId, {
     url: switcherUrl.href,
+  });
+}
+
+function createTempContainer() {
+  return browser.contextualIdentities.create({
+    name: `Temp ${tempContainerCounter++}`,
+    color: "toolbar",
+    icon: "circle",
   });
 }
 

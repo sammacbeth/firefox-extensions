@@ -17,6 +17,7 @@
         "cookies",
         "webNavigation",
         "storage",
+        "alarms",
         "https://staticcdn.duckduckgo.com/*"
     ]
 }
