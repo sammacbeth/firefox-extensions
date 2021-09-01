@@ -145,6 +145,7 @@ async function init() {
 async function start() {
   await init();
   const ignoreTabs = new Set();
+  const tempContainers = new Set([config.default]);
 
   browser.webNavigation.onBeforeNavigate.addListener(
     async ({ tabId, url, frameId }) => {
@@ -180,7 +181,8 @@ async function start() {
         await askWhichContainerToUse(tabId, url, matchedContainers);
       } else if (
         matchedContainers.length === 0 &&
-        tab.cookieStoreId !== config.default
+        tab.cookieStoreId !== config.default &&
+        !tempContainers.has(tab.cookieStoreId)
       ) {
         // this tab should not be an a container but is
         const cont = containers.find(isMatchingTabContainer);
@@ -242,6 +244,7 @@ async function start() {
     if (alarm.name === ALARM_TEMP_ROTATE && config.useTempContainers) {
       const tempContainer = await createTempContainer();
       config.default = tempContainer.cookieStoreId;
+      tempContainers.add(tempContainer.cookieStoreId);
     }
   });
 }
