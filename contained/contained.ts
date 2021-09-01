@@ -26,7 +26,7 @@ type SwitcherPageMessage = {
 const DEFAULT_CONFIG: ExtensionConfig = {
   default: DEFAULT_COOKIE_STOREID,
   useTempContainers: true,
-  tempContainerReplaceInterval: 30,
+  tempContainerReplaceInterval: 120,
   containers: [
     {
       name: "Twitter",
