@@ -3,10 +3,11 @@ const url = params.get("url");
 const options: Container[] = JSON.parse(params.get("options"));
 const buttonTmpl = document.getElementById("switcher-button");
 const buttonsContainer = document.getElementById("buttons");
+const buttons: Array<HTMLElement> = [document.getElementById("no-switch")];
 
 document.getElementById("url").innerText = url;
 
-document.getElementById("no-switch").addEventListener("click", () => {
+buttons[0].addEventListener("click", () => {
   browser.runtime.sendMessage({
     action: "keepTab",
     url,
@@ -17,7 +18,8 @@ options.forEach((container) => {
   if (buttonTmpl instanceof HTMLTemplateElement) {
     buttonsContainer.appendChild(buttonTmpl.content.cloneNode(true));
     const btnElement = document.querySelector("#buttons > button:last-child");
-    btnElement.textContent = `Use ${container.name}`;
+    const index = buttons.push(btnElement as HTMLElement) - 1;
+    btnElement.textContent = `Use ${container.name} (${index})`;
     // rough mapping from container colors to bulma button colors
     switch (container.color) {
       case "blue":
@@ -55,5 +57,13 @@ options.forEach((container) => {
         cookieStoreId: container.cookieStoreId,
       });
     });
+  }
+});
+
+// respond to key events
+document.addEventListener("keydown", (event) => {
+  const num = event.key.charCodeAt(0) - "0".charCodeAt(0);
+  if (buttons.length > num) {
+    buttons[num].click();
   }
 });
