@@ -1,0 +1,25 @@
+{
+    "manifest_version": 2,
+    "name": "Sam's Web Tweaks",
+    "version": "2021.9.21",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "tweaks@sammacbeth.eu",
+            "update_url": "https://sammacbeth.eu/addons/update.json"
+        }
+    },
+    "permissions": [
+        "https://*.theguardian.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["https://*.theguardian.com/*"],
+            "css": ["content-scripts/theguardian.css"]
+        },
+        {
+            "matches": ["https://sourcepoint.theguardian.com/*"],
+            "js": ["content-scripts/theguardian.js"],
+            "all_frames": true
+        }
+    ]
+}
