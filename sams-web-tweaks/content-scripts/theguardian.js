@@ -15,5 +15,5 @@ function runConsent() {
 const checkInterval = setInterval(() => {
     if (runConsent()) {
         clearInterval(checkInterval)
-    } 
+    }
 }, 50)

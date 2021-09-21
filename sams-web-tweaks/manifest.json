@@ -9,7 +9,8 @@
         }
     },
     "permissions": [
-        "https://*.theguardian.com/*"
+        "https://*.theguardian.com/*",
+        "https://*.wunderground.com/*"
     ],
     "content_scripts": [
         {
@@ -20,6 +21,11 @@
             "matches": ["https://sourcepoint.theguardian.com/*"],
             "js": ["content-scripts/theguardian.js"],
             "all_frames": true
+        },
+        {
+            "matches": ["https://*.wunderground.com/*"],
+            "js": ["content-scripts/wunderground.js"],
+            "run_at": "document_start"
         }
     ]
 }
