@@ -4,7 +4,8 @@
     "version": "2021.9.1",
     "browser_specific_settings": {
         "gecko": {
-            "id": "contained@sammacbeth.eu"
+            "id": "contained@sammacbeth.eu",
+            "update_url": "https://sammacbeth.eu/addons/update.json"
         }
     },
     "background": {
