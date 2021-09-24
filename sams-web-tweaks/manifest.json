@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Sam's Web Tweaks",
-    "version": "2021.9.21",
+    "version": "2021.9.24",
     "browser_specific_settings": {
         "gecko": {
             "id": "tweaks@sammacbeth.eu",
