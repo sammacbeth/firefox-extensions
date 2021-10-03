@@ -36,12 +36,12 @@ const DEFAULT_CONFIG: ExtensionConfig = {
       entities: ["Twitter, Inc."],
     },
     {
-      name: "MS Work",
+      name: "Microsoft",
       color: "purple",
       icon: "briefcase",
-      domains: ["*.duckduckgo.com", "duosecurity.com"],
+      domains: [],
       entities: ["Microsoft Corporation"],
-      enterAction: "ask",
+      enterAction: "ask"
     },
     {
       name: "Facebook",
@@ -52,14 +52,14 @@ const DEFAULT_CONFIG: ExtensionConfig = {
       enterAction: "ask",
     },
     {
-      name: "Google",
+      name: "Google Logged In",
       color: "red",
       icon: "fruit",
       domains: [],
       entities: ["Google LLC"],
     },
     {
-      name: "Google Anon",
+      name: "Google Logged out",
       color: "yellow",
       icon: "fence",
       domains: [],
@@ -96,7 +96,8 @@ async function loadConfig(): Promise<ExtensionConfig> {
     default: DEFAULT_COOKIE_STOREID,
     useTempContainers: DEFAULT_CONFIG.useTempContainers,
     tempContainerReplaceInterval: DEFAULT_CONFIG.tempContainerReplaceInterval,
-    containers,
+    // sort containers list
+    containers: containers.sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
 
@@ -349,7 +350,6 @@ async function replaceTab(tabId: number, url: string, cookieStoreId: string) {
   console.log("replace tab", tabId, url, cookieStoreId);
   const tab = await browser.tabs.get(tabId);
   await Promise.all([
-    browser.tabs.remove(tabId),
     browser.tabs.create({
       cookieStoreId,
       url,
@@ -359,6 +359,7 @@ async function replaceTab(tabId: number, url: string, cookieStoreId: string) {
       pinned: tab.pinned,
       windowId: tab.windowId,
     }),
+    browser.tabs.remove(tabId),
   ]);
 }
 
