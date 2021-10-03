@@ -96,7 +96,8 @@ async function loadConfig(): Promise<ExtensionConfig> {
     default: DEFAULT_COOKIE_STOREID,
     useTempContainers: DEFAULT_CONFIG.useTempContainers,
     tempContainerReplaceInterval: DEFAULT_CONFIG.tempContainerReplaceInterval,
-    containers,
+    // sort containers list
+    containers: containers.sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
 
