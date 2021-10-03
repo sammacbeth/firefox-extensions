@@ -36,12 +36,12 @@ const DEFAULT_CONFIG: ExtensionConfig = {
       entities: ["Twitter, Inc."],
     },
     {
-      name: "MS Work",
+      name: "Microsoft",
       color: "purple",
       icon: "briefcase",
-      domains: ["*.duckduckgo.com", "duosecurity.com"],
+      domains: [],
       entities: ["Microsoft Corporation"],
-      enterAction: "ask",
+      enterAction: "ask"
     },
     {
       name: "Facebook",
@@ -52,14 +52,14 @@ const DEFAULT_CONFIG: ExtensionConfig = {
       enterAction: "ask",
     },
     {
-      name: "Google",
+      name: "Google Logged In",
       color: "red",
       icon: "fruit",
       domains: [],
       entities: ["Google LLC"],
     },
     {
-      name: "Google Anon",
+      name: "Google Logged out",
       color: "yellow",
       icon: "fence",
       domains: [],
