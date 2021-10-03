@@ -349,7 +349,6 @@ async function replaceTab(tabId: number, url: string, cookieStoreId: string) {
   console.log("replace tab", tabId, url, cookieStoreId);
   const tab = await browser.tabs.get(tabId);
   await Promise.all([
-    browser.tabs.remove(tabId),
     browser.tabs.create({
       cookieStoreId,
       url,
@@ -359,6 +358,7 @@ async function replaceTab(tabId: number, url: string, cookieStoreId: string) {
       pinned: tab.pinned,
       windowId: tab.windowId,
     }),
+    browser.tabs.remove(tabId),
   ]);
 }
 
