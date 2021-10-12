@@ -41,7 +41,8 @@ const DEFAULT_CONFIG: ExtensionConfig = {
       icon: "briefcase",
       domains: [],
       entities: ["Microsoft Corporation"],
-      enterAction: "ask"
+      enterAction: "ask",
+      leaveAction: "default"
     },
     {
       name: "Facebook",
