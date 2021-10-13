@@ -27,47 +27,7 @@ const DEFAULT_CONFIG: ExtensionConfig = {
   default: DEFAULT_COOKIE_STOREID,
   useTempContainers: true,
   tempContainerReplaceInterval: 120,
-  containers: [
-    {
-      name: "Twitter",
-      color: "turquoise",
-      icon: "tree",
-      domains: [],
-      entities: ["Twitter, Inc."],
-    },
-    {
-      name: "Microsoft",
-      color: "purple",
-      icon: "briefcase",
-      domains: [],
-      entities: ["Microsoft Corporation"],
-      enterAction: "ask",
-      leaveAction: "default"
-    },
-    {
-      name: "Facebook",
-      icon: "fence",
-      color: "blue",
-      domains: ["facebook.com", "messenger.com"],
-      entities: [],
-      enterAction: "ask",
-    },
-    {
-      name: "Google Logged In",
-      color: "red",
-      icon: "fruit",
-      domains: [],
-      entities: ["Google LLC"],
-    },
-    {
-      name: "Google Logged out",
-      color: "yellow",
-      icon: "fence",
-      domains: [],
-      entities: ["Google LLC"],
-      leaveAction: "ask",
-    },
-  ],
+  containers: [],
 };
 
 class Container implements browser.contextualIdentities.ContextualIdentity {
@@ -253,6 +213,18 @@ async function start() {
 
 async function syncContainers(config: ExtensionConfig) {
   const containers = await browser.contextualIdentities.query({});
+  // if there are no containers in the config, populate them from the existing list
+  if (config.containers.length === 0 && containers.length > 0) {
+    containers.forEach((container) => {
+      console.log("import existing container", container.name);
+      config.containers.push({
+        ...container,
+        domains: [],
+        entities: [],
+      });
+    });
+    storeConfig(config);
+  }
   // find matching containers or create new ones
   const linkedContainers = await Promise.all(
     config.containers.map(async (conf) => {
