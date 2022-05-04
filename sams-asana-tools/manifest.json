@@ -1,0 +1,48 @@
+{
+    "manifest_version": 2,
+    "name": "Sam's Asana Tools",
+    "version": "2022.5.3",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "asana@sammacbeth.eu",
+            "update_url": "https://sammacbeth.eu/addons/update.json"
+        }
+    },
+    "background": {
+        "scripts": [
+            "vendor/asana-min.js",
+            "background.js"
+        ]
+    },
+    "permissions": [
+        "storage",
+        "https://app.asana.com/*",
+        "https://github.com/*",
+        "https://dub.duckduckgo.com/*"
+    ],
+    "page_action": {
+        "default_icon": {
+            "48": "favicon.png"
+        },
+        "default_title": "Create review task",
+        "show_matches": [
+            "https://github.com/*/pull/*",
+            "https://dub.duckduckgo.com/*/pull/*"
+        ]
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://github.com/*/pull/*",
+                "https://dub.duckduckgo.com/*/pull/*"
+            ],
+            "js": [
+                "content-script.js"
+            ],
+            "all_frames": false
+        }
+    ],
+    "options_ui": {
+        "page": "options.html"
+    }
+}
